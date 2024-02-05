@@ -92,7 +92,10 @@ internal protocol HighlightingTextEditor {
 }
 
 public typealias OnSelectionChangeCallback = ([NSRange]) -> Void
+#if os(visionOS)
+#else
 public typealias IntrospectCallback = (_ editor: HighlightedTextEditor.Internals) -> Void
+#endif
 public typealias EmptyCallback = () -> Void
 public typealias OnCommitCallback = EmptyCallback
 public typealias OnEditingChangedCallback = EmptyCallback
@@ -121,7 +124,10 @@ extension HighlightingTextEditor {
                         let fontAttribute = attributes.first { $0.key == .font }!
                         // swiftlint:disable:next force_cast
                         let previousFont = fontAttribute.value as! SystemFontAlias
+#if os(visionOS)
+#else
                         font = previousFont.with(formattingRule.fontTraits)
+#endif
                     }
                     highlightedString.addAttribute(.font, value: font, range: match.range)
 

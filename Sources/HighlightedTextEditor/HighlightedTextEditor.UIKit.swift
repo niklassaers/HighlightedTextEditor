@@ -27,7 +27,10 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     private(set) var onCommit: OnCommitCallback?
     private(set) var onTextChange: OnTextChangeCallback?
     private(set) var onSelectionChange: OnSelectionChangeCallback?
+#if os(visionOS)
+#else
     private(set) var introspect: IntrospectCallback?
+#endif
 
     public init(
         text: Binding<String>,
@@ -72,9 +75,12 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     }
 
     private func runIntrospect(_ textView: UITextView) {
+#if os(visionOS)
+#else
         guard let introspect = introspect else { return }
         let internals = Internals(textView: textView, scrollView: nil)
         introspect(internals)
+#endif
     }
 
     private func updateTextViewModifiers(_ textView: UITextView) {
@@ -119,11 +125,15 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
 }
 
 public extension HighlightedTextEditor {
+    
+#if os(visionOS)
+#else
     func introspect(callback: @escaping IntrospectCallback) -> Self {
         var new = self
         new.introspect = callback
         return new
     }
+#endif
 
     func onSelectionChange(_ callback: @escaping (_ selectedRange: NSRange) -> Void) -> Self {
         var new = self
